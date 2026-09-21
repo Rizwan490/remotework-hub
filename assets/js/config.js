@@ -14,8 +14,9 @@ const SITE_CONFIG = {
   tagline: 'Remote Jobs & Work From Home Jobs',
 
   /* Absolute site URL, no trailing slash. Used for canonical + OG tags.
-     After deploying to Cloudflare Pages, replace with your real domain. */
-  url: 'https://YOUR-DOMAIN.pages.dev',
+     Change this, then run `node tools/build.js`, whenever the address changes
+     (for example when you move to a custom domain). */
+  url: 'https://remotework-hub.pages.dev',
 
   description:
     'Discover remote, work-from-home and flexible job opportunities from companies hiring now. Browse entry-level, part-time and no-experience remote roles.',

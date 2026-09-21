@@ -7,5 +7,5 @@ User-agent: *
 Allow: /
 Disallow: /saved.html
 
-# Replace YOUR-DOMAIN with your real domain after deploying.
-Sitemap: https://YOUR-DOMAIN.pages.dev/sitemap.xml
+# Update this if the site moves to a custom domain.
+Sitemap: https://remotework-hub.pages.dev/sitemap.xml
