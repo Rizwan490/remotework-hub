@@ -67,7 +67,7 @@ const ICONS = loadIcons();
 const SITE_URL = String(SITE_CONFIG.url || '').replace(/\/+$/, '');
 const JOB_DIR = String((SITE_CONFIG.jobPages && SITE_CONFIG.jobPages.dir) || 'remote-jobs')
   .replace(/^\/+|\/+$/g, '');
-const CLEAN_URLS = !!(SITE_CONFIG.jobPages && SITE_CONFIG.jobPages.cleanUrls);
+const CLEAN_URLS = !!(SITE_CONFIG.seo && SITE_CONFIG.seo.cleanUrls);
 const OUT_DIR = path.join(ROOT, JOB_DIR);
 
 /* =============================================================================
@@ -134,6 +134,22 @@ const asArray = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string'
 const up = (p) => '../' + String(p || '').replace(/^\/+/, '');
 const absUrl = (p) => SITE_URL + '/' + String(p || '').replace(/^\/+/, '');
 
+/* The address search engines should index. Cloudflare Pages serves every page
+   without its .html and redirects /jobs.html -> /jobs, so pointing a canonical
+   at the .html would point it at a redirect. Links inside the site keep the
+   .html — they still work when the folder is opened locally. */
+function canonicalUrl(p) {
+  let out = String(p || '').replace(/^\/+/, '');
+  if (CLEAN_URLS) {
+    out = out.replace(/\.html(?=$|[?#])/, '');
+    if (out === 'index' || out.indexOf('index?') === 0) out = out.slice(5);
+  }
+  return absUrl(out);
+}
+
+/* Root-relative link path, .html kept (used for hrefs and for _redirects). */
+const linkPath = (p) => (CLEAN_URLS ? String(p).replace(/\.html(?=$|[?#])/, '') : String(p));
+
 /* =============================================================================
    3. Normalise listings — mirrors Jobs.normalize() in assets/js/jobs.js
    ========================================================================== */
@@ -177,8 +193,8 @@ function normalize(raw, index) {
     slug: String(raw.slug || '').trim()
   };
   job.slug = jobSlug(job);
-  job.pageUrl = JOB_DIR + '/' + job.slug + (CLEAN_URLS ? '' : '.html');
-  job.file = JOB_DIR + '/' + job.slug + '.html';
+  job.pageUrl = JOB_DIR + '/' + job.slug + '.html'; // the file, and every href
+  job.file = job.pageUrl;
   return job;
 }
 
@@ -252,7 +268,7 @@ function jobPostingSchema(job) {
     title: job.title,
     description: schemaDescription(job),
     datePosted: job.postedDate,
-    url: absUrl(job.pageUrl),
+    url: canonicalUrl(job.pageUrl),
     hiringOrganization: { '@type': 'Organization', name: job.company },
     identifier: { '@type': 'PropertyValue', name: job.company, value: job.id }
   };
@@ -309,10 +325,10 @@ function jobPostingSchema(job) {
 function breadcrumbSchema(job) {
   const cat = categoryMeta(job.category);
   const items = [
-    ['Home', absUrl('index.html')],
-    ['Remote Jobs', absUrl('jobs.html')],
-    [cat.name, absUrl('category.html?category=' + encodeURIComponent(cat.slug))],
-    [job.title + ' at ' + job.company, absUrl(job.pageUrl)]
+    ['Home', canonicalUrl('index.html')],
+    ['Remote Jobs', canonicalUrl('jobs.html')],
+    [cat.name, canonicalUrl('category.html?category=' + encodeURIComponent(cat.slug))],
+    [job.title + ' at ' + job.company, canonicalUrl(job.pageUrl)]
   ];
   return {
     '@context': 'https://schema.org',
@@ -552,7 +568,7 @@ function pageHTML(job, all, chrome) {
     job.title + ' at ' + job.company + '. ' + (job.location ? job.location + '. ' : '') + job.description,
     155
   );
-  const canonical = absUrl(job.pageUrl);
+  const canonical = canonicalUrl(job.pageUrl);
   const ogImage = absUrl(SITE_CONFIG.seo.defaultImage);
   const robots = SITE_CONFIG.demoMode
     ? 'noindex, nofollow'
@@ -681,24 +697,24 @@ function buildSitemap(jobs) {
     '-->',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     entry(SITE_URL + '/', 'daily', '1.0', today),
-    entry(absUrl('jobs.html'), 'daily', '0.9', today),
-    entry(absUrl('categories.html'), 'weekly', '0.8', today),
+    entry(canonicalUrl('jobs.html'), 'daily', '0.9', today),
+    entry(canonicalUrl('categories.html'), 'weekly', '0.8', today),
     ''
   ];
 
   CATEGORIES.forEach((c) => {
-    lines.push(entry(absUrl('category.html?category=' + encodeURIComponent(c.slug)), 'daily', '0.7', today));
+    lines.push(entry(canonicalUrl('category.html?category=' + encodeURIComponent(c.slug)), 'daily', '0.7', today));
   });
   lines.push('');
 
   /* One entry per job page — the reason this script exists. */
   jobs.forEach((job) => {
-    lines.push(entry(absUrl(job.pageUrl), 'weekly', '0.8', isoDate(job.postedDate) || today));
+    lines.push(entry(canonicalUrl(job.pageUrl), 'weekly', '0.8', isoDate(job.postedDate) || today));
   });
   lines.push('');
 
-  ['about.html', 'contact.html'].forEach((p) => lines.push(entry(absUrl(p), 'monthly', '0.5')));
-  ['privacy.html', 'terms.html', 'disclaimer.html'].forEach((p) => lines.push(entry(absUrl(p), 'yearly', '0.3')));
+  ['about.html', 'contact.html'].forEach((p) => lines.push(entry(canonicalUrl(p), 'monthly', '0.5')));
+  ['privacy.html', 'terms.html', 'disclaimer.html'].forEach((p) => lines.push(entry(canonicalUrl(p), 'yearly', '0.3')));
 
   lines.push('</urlset>', '');
   return lines.join('\n');
@@ -758,8 +774,8 @@ function main() {
   /* /remote-jobs/ itself is not a page — send it to the listing page. */
   const redirects = [
     '# Generated by tools/build.js — Cloudflare Pages reads this on deploy.',
-    '/' + JOB_DIR + '/    /jobs.html    301',
-    '/' + JOB_DIR + '     /jobs.html    301',
+    '/' + JOB_DIR + '/    ' + linkPath('/jobs.html') + '    301',
+    '/' + JOB_DIR + '     ' + linkPath('/jobs.html') + '    301',
     ''
   ].join('\n');
   fs.writeFileSync(path.join(ROOT, '_redirects'), redirects, 'utf8');
@@ -770,7 +786,7 @@ function main() {
   if (removed) console.log('  ' + removed + ' page' + (removed === 1 ? '' : 's') + ' removed (listing no longer in jobs.json)');
   console.log('  sitemap.xml rebuilt with ' + (jobs.length + CATEGORIES.length + 8) + ' URLs');
   console.log('  _redirects written');
-  console.log('\n  Example URL: ' + absUrl(jobs[0].pageUrl));
+  console.log('\n  Example URL: ' + canonicalUrl(jobs[0].pageUrl));
 
   if (SITE_URL.includes('YOUR-DOMAIN')) {
     console.log('\n  ! assets/js/config.js still points at ' + SITE_URL);

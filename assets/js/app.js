@@ -173,6 +173,18 @@ const RW = (() => {
     return basePath() + String(path || '').replace(/^\/+/, '');
   }
 
+  /* The indexable address of a page. Links inside the site keep their .html so
+     the folder works locally, but Cloudflare serves (and redirects to) the
+     extensionless URL, so that is the one search engines are pointed at. */
+  function canonicalUrl(path) {
+    let p = String(path || '').replace(/^\/+/, '');
+    if (SITE_CONFIG.seo && SITE_CONFIG.seo.cleanUrls) {
+      p = p.replace(/\.html(?=$|[?#])/, '');
+      if (p === 'index' || p.indexOf('index?') === 0) p = p.slice(5);
+    }
+    return absUrl(p);
+  }
+
   function currentPath() {
     const p = window.location.pathname.replace(/^\/+/, '');
     return (p || 'index.html') + window.location.search;
@@ -525,6 +537,7 @@ const RW = (() => {
     absUrl,
     basePath,
     rel,
+    canonicalUrl,
     currentPath,
     icon,
     toast,

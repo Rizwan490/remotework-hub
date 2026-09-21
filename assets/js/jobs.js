@@ -30,11 +30,11 @@ const Jobs = (() => {
     return [title, company ? 'at-' + company : '', id].filter(Boolean).join('-');
   }
 
-  /** Site-root-relative path of a job's own static page. */
+  /** Site-root-relative path of a job's own static page (the real file). */
   function pageUrlFor(job) {
     const cfg = SITE_CONFIG.jobPages || {};
     const dir = (cfg.dir || 'remote-jobs').replace(/^\/+|\/+$/g, '');
-    return dir + '/' + job.slug + (cfg.cleanUrls ? '' : '.html');
+    return dir + '/' + job.slug + '.html';
   }
 
   /** Href to a job page, correct from whichever page is calling. */

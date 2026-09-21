@@ -273,7 +273,7 @@ RW.page('category', () => {
     title: 'Remote ' + meta.name + ' Jobs',
     description:
       (meta.intro || 'Browse remote ' + meta.name + ' jobs.').slice(0, 155),
-    canonical: RW.absUrl('category.html?category=' + encodeURIComponent(slug))
+    canonical: RW.canonicalUrl('category.html?category=' + encodeURIComponent(slug))
   });
 
   if (!known) {
@@ -412,8 +412,8 @@ RW.page('job', () => {
   function renderJob(job, all) {
     const cat = Jobs.categoryMeta(job.category);
     const canonical = staticMissing
-      ? RW.absUrl('job.html?id=' + encodeURIComponent(job.id))
-      : RW.absUrl(job.pageUrl);
+      ? RW.canonicalUrl('job.html?id=' + encodeURIComponent(job.id))
+      : RW.canonicalUrl(job.pageUrl);
 
     /* ---- head / SEO ---- */
     const metaDesc = RW.truncate(
