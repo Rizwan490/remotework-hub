@@ -1,0 +1,11 @@
+# robots.txt — RemoteWork Hub
+# NOTE: while the site runs in demo mode, every page also carries
+# <meta name="robots" content="noindex, nofollow"> via assets/js/config.js.
+# Set demoMode: false once real listings are published.
+
+User-agent: *
+Allow: /
+Disallow: /saved.html
+
+# Replace YOUR-DOMAIN with your real domain after deploying.
+Sitemap: https://YOUR-DOMAIN.pages.dev/sitemap.xml

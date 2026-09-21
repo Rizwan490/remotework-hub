@@ -1,0 +1,23 @@
+# Cloudflare Pages headers — no build step needed, this file is read on deploy.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  X-XSS-Protection: 0
+
+# Long cache for fingerprint-free static assets.
+# If you edit a CSS/JS file, bump the ?v= query in the HTML or purge the cache.
+/assets/css/*
+  Cache-Control: public, max-age=604800, must-revalidate
+
+/assets/js/*
+  Cache-Control: public, max-age=604800, must-revalidate
+
+/assets/images/*
+  Cache-Control: public, max-age=2592000, immutable
+
+# Job data should refresh quickly when you publish new listings.
+/assets/data/*
+  Cache-Control: public, max-age=300, must-revalidate

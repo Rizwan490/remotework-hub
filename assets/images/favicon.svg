@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RemoteWork Hub">
+  <rect width="64" height="64" rx="15" fill="#2563EB"/>
+  <g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 23 32 13l18 10v18L32 51 14 41Z"/>
+    <path d="m14 23 18 10 18-10M32 33v18"/>
+  </g>
+</svg>

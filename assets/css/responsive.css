@@ -1,0 +1,324 @@
+/* =============================================================================
+   responsive.css — mobile-first breakpoints
+   -----------------------------------------------------------------------------
+   Base styles (style.css / components.css) target the narrowest screens.
+   This file layers on tablet and desktop behaviour, then handles the mobile
+   filter drawer, bottom navigation and sticky apply bar.
+   Verified at 320 / 375 / 390 / 414 / 768 / 1024 / 1280 / 1440 / 1920.
+   ========================================================================== */
+
+/* ============================== MOBILE-ONLY BEHAVIOUR ==================== */
+
+/* --- Mobile filter drawer (below 1024px the sidebar becomes a drawer) --- */
+@media (max-width: 1023.98px) {
+  .filters {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 120;
+    width: min(400px, 92vw);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+    border-left: 0;
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition: transform var(--t-base), visibility var(--t-base);
+    box-shadow: var(--sh-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .filters.is-open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .filters__form {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .filters__scroll {
+    flex: 1;
+    min-height: 0;
+    padding-bottom: var(--s-8);
+  }
+
+  .filters__foot {
+    display: block;
+  }
+
+  .drawer-close {
+    display: grid;
+  }
+}
+
+/* --- Header fits small phones: the CTA is duplicated inside the menu --- */
+@media (max-width: 639.98px) {
+  .header-actions .btn {
+    display: none;
+  }
+}
+
+/* --- Sticky bottom navigation + apply bar (phones) --- */
+@media (max-width: 767.98px) {
+  body.has-bottom-nav {
+    padding-bottom: 62px;
+  }
+
+  body.has-apply-bar {
+    padding-bottom: 76px;
+  }
+}
+
+@media (min-width: 768px) {
+  .bottom-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .apply-bar {
+    display: none !important;
+  }
+}
+
+/* ================================ ≥ 480px =============================== */
+@media (min-width: 480px) {
+  :root {
+    --gutter: 20px;
+  }
+
+  .search-card {
+    padding: var(--s-3);
+  }
+
+  .newsletter__form {
+    grid-template-columns: 1fr auto;
+  }
+
+  .error-page__actions .btn {
+    min-width: 180px;
+  }
+}
+
+/* ================================ ≥ 640px =============================== */
+@media (min-width: 640px) {
+  :root {
+    --header-h: 68px;
+  }
+
+  .stats__grid {
+    grid-template-columns: repeat(4, 1fr);
+    padding: var(--s-6) var(--s-5);
+  }
+
+  .cat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .job-list--grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-head {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-5);
+  }
+
+  .section-head__group {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .cta-band {
+    padding: var(--s-9) var(--s-8);
+  }
+
+  .newsletter {
+    padding: var(--s-8);
+  }
+
+  .footer-bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .detail-main,
+  .side-card {
+    padding: var(--s-6);
+  }
+
+  .form-grid--split {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ================================ ≥ 768px =============================== */
+@media (min-width: 768px) {
+  .hero {
+    padding-block: var(--s-10) var(--s-11);
+  }
+
+  .search-card {
+    grid-template-columns: 1.35fr 1fr auto;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .search-card__field {
+    border-radius: var(--r-md);
+  }
+
+  .search-card__field + .search-card__field {
+    border-left: 1px solid var(--color-border);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .search-card__field + .search-card__field:focus-within {
+    border-radius: var(--r-md);
+    border-left-color: var(--color-primary);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: var(--s-8);
+  }
+
+  .detail-head__title {
+    font-size: var(--fs-3xl);
+  }
+
+  .listing-toolbar {
+    flex-wrap: nowrap;
+  }
+}
+
+/* ================================ ≥ 900px =============================== */
+@media (min-width: 900px) {
+  .nav {
+    display: flex;
+  }
+
+  .nav-toggle,
+  .mobile-nav {
+    display: none;
+  }
+
+  .cat-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  }
+}
+
+/* =============================== ≥ 1024px =============================== */
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 24px;
+  }
+
+  .listing-layout {
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: var(--s-6);
+  }
+
+  .filters {
+    position: sticky;
+    top: calc(var(--header-h) + 20px);
+    max-height: calc(100vh - var(--header-h) - 40px);
+  }
+
+  .filters__form {
+    max-height: calc(100vh - var(--header-h) - 40px);
+  }
+
+  .filters__scroll {
+    overflow-y: auto;
+  }
+
+  .filter-trigger {
+    display: none;
+  }
+
+  .detail-layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--s-6);
+  }
+
+  .detail-sidebar {
+    position: sticky;
+    top: calc(var(--header-h) + 20px);
+  }
+
+  .job-list--grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .section {
+    padding-block: var(--s-10);
+  }
+}
+
+/* =============================== ≥ 1280px =============================== */
+@media (min-width: 1280px) {
+  :root {
+    --gutter: 32px;
+  }
+
+  .listing-layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+
+  .cat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .hero__inner {
+    gap: var(--s-6);
+  }
+}
+
+/* =============================== ≥ 1600px =============================== */
+@media (min-width: 1600px) {
+  :root {
+    --container: 1280px;
+  }
+}
+
+/* ============================ print (job detail) ======================== */
+@media print {
+  .site-header,
+  .site-footer,
+  .bottom-nav,
+  .apply-bar,
+  .ad-slot,
+  .detail-sidebar,
+  .filters,
+  .demo-bar,
+  .skip-link,
+  [data-related-section],
+  [data-recent-section] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .detail-main {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+}
